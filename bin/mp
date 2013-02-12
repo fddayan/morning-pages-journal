@@ -1,0 +1,26 @@
+#!/usr/bin/env ruby
+$: << File.dirname(__FILE__) + '/../lib'
+
+require 'trollop'
+require 'morning-pages-journal'
+require "yaml"
+
+opts = Trollop.options do
+  opt :config,"Configuration file", :required => false, :type => :string, :default => "~/.mp.yml"
+end
+
+cli = MorningPagesJournal::CLI.new(opts)
+
+if ARGV.empty?
+  cli.open
+else
+  cmd = ARGV.shift # get the subcomman
+
+  case cmd
+    when "list"
+      cli.list
+    when "stat"
+      cli.stat
+  end
+
+end
