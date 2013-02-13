@@ -14,7 +14,7 @@ A command line tool to manage morning pages.
 Usage
 -----
 
-### To open current day morning page:
+### To open current day morning page in editor:
 
     $ mp
 
