@@ -13,9 +13,9 @@ To open current day morning page
 `$ mp`
 
 To list morning pages and progress
-'$ mp list'
-'$ mp list -d' for today only
-'$ mp list -w' for this week
-'$ mp list -m' for this month
-'$ mp list -y' for this year
+`$ mp list`
+`$ mp list -d` for today only
+`$ mp list -w` for this week
+`$ mp list -m` for this month
+`$ mp list -y` for this year
 
