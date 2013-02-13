@@ -9,13 +9,19 @@ A command line tool to manage morning pages.
     three pages of anything on the page…and then do three more pages tomorrow.
 
 
-To open current day morning page
+To open current day morning page:
+
 `$ mp`
 
-To list morning pages and progress
+To list morning pages and progress:
+
 `$ mp list`
+
 `$ mp list -d` for today only
+
 `$ mp list -w` for this week
+
 `$ mp list -m` for this month
+
 `$ mp list -y` for this year
 
