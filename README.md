@@ -8,6 +8,7 @@ A command line tool to manage morning pages.
     synchronize the day at hand. Do not over-think Morning Pages: just put
     three pages of anything on the page…and then do three more pages tomorrow.
 
+### Commands
 
 To open current day morning page:
 
