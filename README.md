@@ -1,3 +1,6 @@
+Morning Pages Journal
+=====================
+
 A command line tool to manage morning pages.
 
     Morning Pages are three pages of longhand, stream of consciousness writing,
@@ -8,21 +11,49 @@ A command line tool to manage morning pages.
     synchronize the day at hand. Do not over-think Morning Pages: just put
     three pages of anything on the page…and then do three more pages tomorrow.
 
-### Commands
+Usage
+-----
 
-To open current day morning page:
+### To open current day morning page:
 
-`$ mp`
+    $ mp
 
-To list morning pages and progress:
+### To list morning pages and progress:
+    
+    $ mp list       # current month
+    $ mp list -w    # current week
+    $ mp list -d    # curent day
+    $ mp list -m    # current month
+    $ mp list -y    # current year
 
-`$ mp list`
+### To get stats:
 
-`$ mp list -d` for today only
+    $ mp stat       # current month
+    $ mp stat -w    # current week
+    $ mp stat -d    # curent day
+    $ mp stat -m    # current month
+    $ mp stat -y    # current year
+    
+### To count words:
 
-`$ mp list -w` for this week
+    $ mp words       # current month
+    $ mp words -w    # current week
+    $ mp words -d    # curent day
+    $ mp words -m    # current month
+    $ mp words -y    # current year
 
-`$ mp list -m` for this month
+Configuration
+-------------
 
-`$ mp list -y` for this year
+A  `~/.mp.yml` file will be created that looks like
 
+    editor: mate
+    folder: ~/.morning-pages/
+    words: 750
+    stats: 50
+
+
+Installation
+------------
+
+    gem install morning-pages-journal
