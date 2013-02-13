@@ -52,6 +52,15 @@ A  `~/.mp.yml` file will be created that looks like
     words: 750
     stats: 50
 
+You can change setting manually or use 
+
+    mp config <key> <value>
+    mp config editor vi 
+    
+You can also specify a config file and run any of the command
+
+    mp -c custom.yaml list
+    
 
 Installation
 ------------
