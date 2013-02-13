@@ -10,6 +10,8 @@ A command line tool to manage morning pages.
     only. Morning Pages provoke, clarify, comfort, cajole, prioritize and
     synchronize the day at hand. Do not over-think Morning Pages: just put
     three pages of anything on the page…and then do three more pages tomorrow.
+    
+I thought I had a great idea. I wrote the code, then I found out somebody else did it. Anyway, here is my code...
 
 Usage
 -----
