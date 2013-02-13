@@ -9,7 +9,7 @@ def range(sub_opts)
   range = (sub_opts[:day] && :day) || (sub_opts[:week] && :week) || (sub_opts[:month] && :month) || (sub_opts[:year] && :year) || :month
 end
 
-SUB_COMMANDS = %w(list stat words)
+SUB_COMMANDS = %w(list stat words config)
 opts = Trollop.options do
   banner "Usage: mp [options] [list | stat | words] [options]"
   opt :config,"Configuration file", :required => false, :type => :string, :default => "~/.mp.yml"
@@ -45,6 +45,12 @@ else
       sub_opts = parse_options
 
       cli.words(:range => range(sub_opts))
+    when "config"
+      raise Trollop::die("config requires 2 arguments key and value") if ARGV.size != 2
+      key = ARGV.shift
+      value = ARGV.shift
+
+      cli.update_config(key, value)
     else
       puts "Unknown command '#{cmd}'".color(:red)
   end

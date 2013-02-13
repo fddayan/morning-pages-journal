@@ -205,6 +205,15 @@ module MorningPagesJournal
         end
       end
 
+      def update_config(key,value)
+        c = config
+        c[key] = value
+
+        File.open(opts[:config],"w+") do |f|
+          f.write YAML::dump(c)
+        end
+      end
+
       private
 
         def create_config_if_not_exists!
