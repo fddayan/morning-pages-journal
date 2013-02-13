@@ -5,8 +5,15 @@ require 'trollop'
 require 'morning-pages-journal'
 require "yaml"
 
+def range(sub_opts)
+  range = (sub_opts[:day] && :day) || (sub_opts[:week] && :week) || (sub_opts[:month] && :month) || (sub_opts[:year] && :year) || :month
+end
+
+SUB_COMMANDS = %w(list stat words)
 opts = Trollop.options do
+  banner "Usage: mp [options] [list | stat | words] [options]"
   opt :config,"Configuration file", :required => false, :type => :string, :default => "~/.mp.yml"
+  stop_on SUB_COMMANDS
 end
 
 cli = MorningPagesJournal::CLI.new(opts)
@@ -16,11 +23,30 @@ if ARGV.empty?
 else
   cmd = ARGV.shift # get the subcomman
 
+  def parse_options
+    Trollop.options do
+      opt :day,"Show only for the day", :required => false,  :default => false
+      opt :week,"Show only for the week", :required => false , :default => false
+      opt :month,"Show only for the month", :required => false, :default => false
+      opt :year,"Show only for the year", :required => false, :default => false
+    end
+  end
+
   case cmd
     when "list"
-      cli.list
+      sub_opts = parse_options
+
+      cli.list(:range => range(sub_opts))
     when "stat"
-      cli.stat
+      sub_opts = parse_options
+
+      cli.stat(:range => range(sub_opts))
+    when "words"
+      sub_opts = parse_options
+
+      cli.words(:range => range(sub_opts))
+    else
+      puts "Unknown command '#{cmd}'".color(:red)
   end
 
 end

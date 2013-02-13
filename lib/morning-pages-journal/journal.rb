@@ -11,12 +11,15 @@ module MorningPagesJournal
       end
 
       def date
+        return @date if @date
+
         s = @file_path.split("/")
 
         year_month = s[s.size-2]
         day = s[s.size-1].split(".")[0]
 
-        Date.parse("#{year_month}-#{day}")
+        @date = Date.parse("#{year_month}-#{day}")
+        @date
       end
 
       def words
@@ -58,26 +61,28 @@ module MorningPagesJournal
         @pages.select {|p| p.date == date }.first
       end
 
-      def each_day
-        min = pages.first.date
+      def each_day(range = :month)
+        return if pages.empty?
         max = pages.last.date
+        min = date_starting_at(max, range)
 
         min.upto(max).each do |date|
           yield date
         end
       end
 
-      def min_date
-        pages.first.date
+      def min_date(range = :month)
+        # pages.first.date
+        date_starting_at(max_date,range)
       end
 
       def max_date
         pages.last.date
       end
 
-      def word_count
+      def word_count(range=:month)
         hash = Hash.new(0)
-        pages.each do |p|
+        pages_from(min_date(range),max_date).each do |p|
           p.word_count(hash)
         end
         hash
@@ -88,10 +93,25 @@ module MorningPagesJournal
         w.inject(0.0) { |sum, el| sum + el } / w.size
       end
 
+      def pages_from(from,to)
+        pages.select do |p|
+          p.date >= from && p.date <= to
+        end
+      end
+
       private
 
         def pages_files
           Dir.glob("#{File.expand_path(@base_folder)}/**/*").reject {|fn| File.directory?(fn) }
+        end
+
+        def date_starting_at(date,range)
+         case range
+            when :day then date
+            when :week then date - (date.wday-1)
+            when :month then date - (date.mday-1)
+            when :year then date - (date.yday-1)
+          end
         end
     end
 
@@ -99,6 +119,7 @@ module MorningPagesJournal
 
       def initialize(command_line_arguments)
         @opts = command_line_arguments
+        @opts[:config] = File.expand_path(@opts[:config])
       end
 
       def opts
@@ -106,14 +127,7 @@ module MorningPagesJournal
       end
 
       def config
-        unless File.exists?(opts[:config])
-          File.open(opts[:config],"w+") do |f|
-            f.write YAML::dump({
-                "editor" => "mate",
-                "folder" => "~/Documents/journal/"
-              })
-          end
-        end
+        create_config_if_not_exists!
 
         @config ||= YAML::load(File.open(opts[:config]))
       end
@@ -134,18 +148,13 @@ module MorningPagesJournal
         system "mkdir -p #{journal.today_folder} ; #{editor} #{journal.today_file}"
       end
 
-      def list
-        puts "Lists"
+      def list(options)
         journal = MorningPagesJournal::Journal.new(:base_folder => config["folder"])
 
         month_name = ""
         total_words = 0
-        journal.each_day do |date|
+        journal.each_day(options[:range]) do |date|
           if month_name != date.strftime("%B")
-            # if month_name != ""
-              # puts "Total #{total_words}"
-              # total_words = 0
-            # end
             month_name = date.strftime("%B")
             puts month_name
             puts "-" * 100
@@ -154,14 +163,14 @@ module MorningPagesJournal
           page = journal.get_page(date)
 
           words,color =  if page
-                                if page.words.to_i < config_words
-                                  [page.words.to_i, :red]
-                                else
-                                  [page.words.to_i, :green]
-                                end
-                              else
-                                [0,:yellow]
-                              end
+                            if page.words.to_i < config_words
+                              [page.words.to_i, :red]
+                            else
+                              [page.words.to_i, :green]
+                            end
+                          else
+                            [0,:yellow]
+                          end
 
           total_words += words
           puts "#{date.strftime('%a, %d')}\t#{words.to_s.color(color)}\t" + ("="* (words/10).to_i).color(color)
@@ -172,31 +181,45 @@ module MorningPagesJournal
         end
       end
 
-      def stat
+      def stat(options)
         journal = MorningPagesJournal::Journal.new(:base_folder => config["folder"])
 
-        days = (journal.max_date - journal.min_date).to_i
-        missed = days - journal.pages.size
+        min_date = journal.min_date(options[:range])
+        days = ((journal.max_date+1) - min_date).to_i
+        morning_pages = journal.pages_from(min_date,journal.max_date).size
+        missed = days - morning_pages
 
-        puts "Average Words:\t#{journal.average_words}\n"
-        puts "From:\t#{journal.max_date}"
-        puts "To:\t#{journal.min_date}"
+        puts "Average Words:\t#{journal.average_words.to_i}\n"
+        puts "From:\t#{min_date}"
+        puts "To:\t#{journal.max_date}"
         puts "Total days:\t#{days}"
-        puts "Morning pages:\t#{journal.pages.size}"
+        puts "Morning pages:\t#{morning_pages}"
         puts "Missed:\t#{missed}"
         puts "\n"
-        journal.word_count.sort_by {|k,v| v}.reverse.take(stats_words).each do |e|
+      end
+
+      def words(options)
+        journal = MorningPagesJournal::Journal.new(:base_folder => config["folder"])
+        journal.word_count(options[:range]).sort_by {|k,v| v}.reverse.take(stats_words).each do |e|
            puts "#{e[0]}\t#{e[1]}"
         end
-
-        # h = Hash.new(0)
-        # journal.pages.first.word_count(h)#.each do |e|
-        # # .sort_by {|k,v| v}.reverse.each do |e|
-        #   # p e
-        # #end
-
-        # p h
       end
+
+      private
+
+        def create_config_if_not_exists!
+          unless File.exists?(opts[:config])
+            File.open(opts[:config],"w+") do |f|
+              f.write YAML::dump({
+                  "editor" => "mate",
+                  "folder" => "~/.morning-pages/",
+                  "words" => 750,
+                  "stats" => 50
+                })
+            end
+          end
+
+        end
 
     end
 

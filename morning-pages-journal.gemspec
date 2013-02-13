@@ -8,8 +8,8 @@ Gem::Specification.new do |s|
   s.authors     = ["Federico Dayan"]
   s.email       = ["federico.dayan@gmail.com"]
   s.homepage    = ""
-  s.summary     = %q{TODO: Write a gem summary}
-  s.description = %q{TODO: Write a gem description}
+  s.summary     = %q{Command line tool to manage morning pages}
+  s.description = %q{Morning pages are three pages of writing done every day. This tool organizes pages and keep track of progress. It does not share anything of course }
 
   s.rubyforge_project = "morning-pages-journal"
 
