@@ -57,7 +57,7 @@ You can change setting manually or use
     mp config <key> <value>
     mp config editor vi 
     
-You can also specify a config file and run any of the command
+You can also specify a config file and run any of the commands
 
     mp -c custom.yaml list
     
