@@ -68,3 +68,7 @@ Installation
 ------------
 
     gem install morning-pages-journal
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/fddayan/morning-pages-journal/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
